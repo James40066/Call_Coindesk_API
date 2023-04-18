@@ -24,7 +24,7 @@ public class CoinDeskController {
     @GetMapping("/call_CoinDesk")
     public CoinDesk call_CoinDesk(@RequestParam String api_url) throws Exception{
 
-        CoinDesk coinDesk = coindeskService.get_Coindesk(api_url);
+        CoinDesk coinDesk = coindeskService.getCoindesk(api_url);
 
         //http://localhost:8081/coindesk/call_CoinDesk?api_url=https://api.coindesk.com/v1/bpi/currentprice.json
         return coinDesk;
@@ -33,7 +33,7 @@ public class CoinDeskController {
     @GetMapping("/call_NewCoinDesk")
     public NewCoinDesk call_NewCoinDesk(@RequestParam String api_url) throws Exception{
 
-        NewCoinDesk newCoinDesk = coindeskService.trans_Coindesk(api_url);
+        NewCoinDesk newCoinDesk = coindeskService.transCoindesk(api_url);
 
         //http://localhost:8081/coindesk/call_NewCoinDesk?api_url=https://api.coindesk.com/v1/bpi/currentprice.json
         return newCoinDesk;
