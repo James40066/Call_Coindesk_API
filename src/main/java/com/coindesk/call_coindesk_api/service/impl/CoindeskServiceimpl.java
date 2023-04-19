@@ -2,23 +2,32 @@ package com.coindesk.call_coindesk_api.service.impl;
 
 import com.coindesk.call_coindesk_api.bean.Coin;
 import com.coindesk.call_coindesk_api.bean.CoinDesk;
+import com.coindesk.call_coindesk_api.bean.DbCoinDesk;
 import com.coindesk.call_coindesk_api.bean.NewCoinDesk;
+import com.coindesk.call_coindesk_api.dao.DbCoinDeskRepository;
 import com.coindesk.call_coindesk_api.service.CoindeskService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
 import org.json.JSONObject;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
 import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
 
+
+
 @Component
 @Slf4j
 public class CoindeskServiceimpl implements CoindeskService {
+    @Autowired
+    DbCoinDeskRepository dbCoinDeskRepository;
+
     private static final String DATE_FORMAT_PATTERN = "yyyy/MM/dd HH:mm:ss";
     private static final String CURRENCY_EUR = "EUR";
     private static final String CURRENCY_GBP = "GBP";
@@ -63,7 +72,7 @@ public class CoindeskServiceimpl implements CoindeskService {
                 JSONObject jsob = bpi.getJSONObject(key);
                 Coin coin = new Coin();
                 coin.setCode(jsob.getString("code"));
-                coin.setCodeDesc(checkCoinDesc(jsob.getString("code")));
+                coin.setDescription(checkCoinDesc(jsob.getString("code")));
                 coin.setRate(jsob.getString("rate"));
                 coins.add(coin);
             }
@@ -97,6 +106,56 @@ public class CoindeskServiceimpl implements CoindeskService {
                 codeDesc = "";
         }
         return codeDesc;
+    }
+
+    @Override
+    public boolean insert(DbCoinDesk dbCoinDesk){
+        boolean is_save = true;
+        try{
+            dbCoinDeskRepository.save(dbCoinDesk);
+        }catch (Exception ex){
+            is_save = false;
+        }
+        return is_save;
+    }
+
+    @Override
+    public boolean update(DbCoinDesk dbCoinDesk, Integer dbCoinDeskId) throws Exception {
+        boolean is_save = true;
+        try{
+            DbCoinDesk d =  dbCoinDeskRepository.findById(dbCoinDeskId).orElse(null);
+            d.setCode(dbCoinDesk.getCode());
+            d.setSymbol(dbCoinDesk.getSymbol());
+            d.setRate(dbCoinDesk.getRate());
+            d.setDescription(dbCoinDesk.getDescription());
+            d.setRate_float(dbCoinDesk.getRate_float());
+            dbCoinDeskRepository.save(d);
+        }catch (Exception ex){
+            is_save = false;
+        }
+        return is_save;
+    }
+
+    @Override
+    public boolean delete(Integer dbCoinDeskId) throws Exception {
+        boolean is_delete = true;
+        try{
+            dbCoinDeskRepository.deleteById(dbCoinDeskId);
+        }catch (Exception ex){
+            is_delete = false;
+        }
+        return is_delete;
+    }
+
+    @Override
+    public DbCoinDesk get(Integer dbCoinDeskId) throws Exception {
+        DbCoinDesk dbCoinDesk =  dbCoinDeskRepository.findById(dbCoinDeskId).orElse(null);
+
+        if(dbCoinDesk != null){
+            return  dbCoinDesk;
+        }else{
+            return  null;
+        }
     }
 
 }

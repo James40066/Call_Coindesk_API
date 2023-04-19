@@ -3,9 +3,17 @@ package com.coindesk.call_coindesk_api.bean;
 public class Coin {
     String code;
 
-    String codeDesc;
+    String description;
 
     String rate;
+
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
+    }
 
     public String getCode() {
         return code;
@@ -15,13 +23,6 @@ public class Coin {
         this.code = code;
     }
 
-    public String getCodeDesc() {
-        return codeDesc;
-    }
-
-    public void setCodeDesc(String code_desc) {
-        this.codeDesc = codeDesc;
-    }
 
     public String getRate() {
         return rate;

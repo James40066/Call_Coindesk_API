@@ -1,46 +1,103 @@
 package com.coindesk.call_coindesk_api.controller;
 
-import com.coindesk.call_coindesk_api.bean.Bpi;
 import com.coindesk.call_coindesk_api.bean.CoinDesk;
+import com.coindesk.call_coindesk_api.bean.DbCoinDesk;
 import com.coindesk.call_coindesk_api.bean.NewCoinDesk;
 import com.coindesk.call_coindesk_api.service.CoindeskService;
-import com.power.common.model.CommonResult;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.MediaType;
-import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.client.RestTemplate;
 
-import java.util.Arrays;
 
 @RestController
 @RequestMapping("/coindesk")
-@Slf4j
 public class CoinDeskController {
     @Autowired
     CoindeskService coindeskService;
 
-    @GetMapping("/call_CoinDesk")
-    public CoinDesk call_CoinDesk(@RequestParam String api_url) throws Exception{
+    @GetMapping("/CoinDeskAPI")
+    public ResponseEntity<CoinDesk> CoinDeskAPI(@RequestParam String api_url) throws Exception{
+        //呼叫 coindesk 的 API
+        //http://localhost:8081/coindesk/CoinDeskAPI?api_url=https://api.coindesk.com/v1/bpi/currentprice.json
 
         CoinDesk coinDesk = coindeskService.getCoindesk(api_url);
 
-        //http://localhost:8081/coindesk/call_CoinDesk?api_url=https://api.coindesk.com/v1/bpi/currentprice.json
-        return coinDesk;
+
+        return ResponseEntity.status(HttpStatus.OK).body(coinDesk);
     }
 
-    @GetMapping("/call_NewCoinDesk")
-    public NewCoinDesk call_NewCoinDesk(@RequestParam String api_url) throws Exception{
+    @GetMapping("/NewCoinDeskAPI")
+    public ResponseEntity<NewCoinDesk> NewCoinDeskAPI(@RequestParam String api_url) throws Exception{
+        //呼叫 coindesk 的 API，並進行資料轉換，組成新 API
+        //http://localhost:8081/coindesk/NewCoinDeskAPI?api_url=https://api.coindesk.com/v1/bpi/currentprice.json
 
         NewCoinDesk newCoinDesk = coindeskService.transCoindesk(api_url);
 
-        //http://localhost:8081/coindesk/call_NewCoinDesk?api_url=https://api.coindesk.com/v1/bpi/currentprice.json
-        return newCoinDesk;
+        return ResponseEntity.status(HttpStatus.OK).body(newCoinDesk);
     }
 
+    @Transactional
+    @PostMapping("/coin")
+    public ResponseEntity<?> insert(@RequestBody DbCoinDesk dbCoinDesk) throws Exception {
+        //insert
+        //http://localhost:8081/coindesk/coin
+        //{"code":"HKD","symbol":"&#165;","rate":"29,449.8807","description":"港幣","rate_float":29449.8807}
 
+        boolean status = coindeskService.insert(dbCoinDesk);
+        if(status){
+            return ResponseEntity.status(HttpStatus.CREATED).body("新增成功");
+        }else{
+            return ResponseEntity.status(HttpStatus.OK).body("新增失敗");
+        }
 
+    }
 
+    @Transactional
+    @PutMapping("/coin/{dbCoinDeskId}")
+    public ResponseEntity<?> update(@PathVariable Integer dbCoinDeskId, @RequestBody DbCoinDesk dbCoinDesk) throws Exception {
+        //update
+        //http://localhost:8081/coindesk/coin/6
+        //{"code":"NTD","symbol":"&#165;","rate":"29,449.8807","description":"新台幣","rate_float":29449.8807}
+
+        boolean status = coindeskService.update(dbCoinDesk,dbCoinDeskId);
+        if(status){
+            return ResponseEntity.status(HttpStatus.OK).body("修改成功");
+        }else{
+            return ResponseEntity.status(HttpStatus.OK).body("修改失敗，無該筆資料");
+        }
+
+    }
+
+    @Transactional
+    @DeleteMapping ("/coin/{dbCoinDeskId}")
+    public ResponseEntity<?> delete(@PathVariable Integer dbCoinDeskId) throws Exception {
+        //delete
+        //http://localhost:8081/coindesk/coin/6
+
+        boolean status = coindeskService.delete(dbCoinDeskId);
+        if(status){
+            return ResponseEntity.status(HttpStatus.OK).body("刪除成功");
+        }else{
+            return ResponseEntity.status(HttpStatus.OK).body("刪除失敗，無該筆資料");
+        }
+
+    }
+
+    @GetMapping  ("/coin/{dbCoinDeskId}")
+    public ResponseEntity<?> get(@PathVariable Integer dbCoinDeskId) throws Exception {
+        //get
+        //http://localhost:8081/coindesk/coin/1
+
+        DbCoinDesk dbCoinDesk = coindeskService.get(dbCoinDeskId);
+
+        if(dbCoinDesk != null) {
+            return ResponseEntity.status(HttpStatus.OK).body(dbCoinDesk);
+        }else{
+            return ResponseEntity.status(HttpStatus.OK).body("查無資料");
+        }
+
+    }
 
 }

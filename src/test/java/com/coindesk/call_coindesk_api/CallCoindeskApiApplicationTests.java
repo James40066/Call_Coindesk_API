@@ -8,6 +8,7 @@ class CallCoindeskApiApplicationTests {
 
     @Test
     void contextLoads() {
+
     }
 
 }
