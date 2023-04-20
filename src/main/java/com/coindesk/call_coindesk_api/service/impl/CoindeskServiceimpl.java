@@ -13,7 +13,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
 import org.springframework.stereotype.Component;
-import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
 import java.time.LocalDateTime;
@@ -21,13 +20,12 @@ import java.time.format.DateTimeFormatter;
 import java.util.*;
 
 
-
 @Component
 @Slf4j
 public class CoindeskServiceimpl implements CoindeskService {
     @Autowired
     DbCoinDeskRepository dbCoinDeskRepository;
-
+    private static final String API_URL = "https://api.coindesk.com/v1/bpi/currentprice.json";
     private static final String DATE_FORMAT_PATTERN = "yyyy/MM/dd HH:mm:ss";
     private static final String CURRENCY_EUR = "EUR";
     private static final String CURRENCY_GBP = "GBP";
@@ -46,22 +44,23 @@ public class CoindeskServiceimpl implements CoindeskService {
     }
 
     @Override
-    public String callApi(String url) {
-        String json = restTemplate.getForObject(url, String.class);
+    public String callApi() {
+        String json = restTemplate.getForObject(API_URL, String.class);
+        log.info("json=>" + json);
         return json;
     }
 
     @Override
-    public CoinDesk getCoindesk(String url) throws Exception {
-        String json = callApi(url);
-        log.info("json=>" + json);
+    public CoinDesk getCoindesk() throws Exception {
+        String json = callApi();
         CoinDesk coinDesk = objectMapper.readValue(json, CoinDesk.class);
         return coinDesk;
     }
 
     @Override
-    public NewCoinDesk transCoindesk(String url) throws Exception {
-        JSONObject jsonObject = new JSONObject(callApi(url));
+    public NewCoinDesk transCoindesk() throws Exception {
+        String json = callApi();
+        JSONObject jsonObject = new JSONObject(json);
         JSONObject bpi = jsonObject.getJSONObject("bpi");
         List<Coin> coins = new ArrayList<>();
 

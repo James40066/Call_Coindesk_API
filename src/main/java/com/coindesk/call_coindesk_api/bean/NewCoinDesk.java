@@ -1,8 +1,6 @@
 package com.coindesk.call_coindesk_api.bean;
 
-import java.util.Date;
 import java.util.List;
-
 public class NewCoinDesk {
     List<Coin> coins;
 

@@ -4,6 +4,8 @@ import com.coindesk.call_coindesk_api.bean.CoinDesk;
 import com.coindesk.call_coindesk_api.bean.DbCoinDesk;
 import com.coindesk.call_coindesk_api.bean.NewCoinDesk;
 import com.coindesk.call_coindesk_api.service.CoindeskService;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -13,33 +15,38 @@ import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/coindesk")
+@Api(tags = "CoinDesk相關API")
 public class CoinDeskController {
+    //http://localhost:8081/swagger-ui/index.html
+
     @Autowired
     CoindeskService coindeskService;
 
     @GetMapping("/CoinDeskAPI")
-    public ResponseEntity<CoinDesk> CoinDeskAPI(@RequestParam String api_url) throws Exception{
+    @ApiOperation("呼叫coindesk的API")
+    public ResponseEntity<CoinDesk> CoinDeskAPI() throws Exception{
         //呼叫 coindesk 的 API
-        //http://localhost:8081/coindesk/CoinDeskAPI?api_url=https://api.coindesk.com/v1/bpi/currentprice.json
+        //http://localhost:8081/coindesk/CoinDeskAPI
 
-        CoinDesk coinDesk = coindeskService.getCoindesk(api_url);
-
+        CoinDesk coinDesk = coindeskService.getCoindesk();
 
         return ResponseEntity.status(HttpStatus.OK).body(coinDesk);
     }
 
     @GetMapping("/NewCoinDeskAPI")
-    public ResponseEntity<NewCoinDesk> NewCoinDeskAPI(@RequestParam String api_url) throws Exception{
+    @ApiOperation("呼叫coindesk進行資料轉換後的API")
+    public ResponseEntity<NewCoinDesk> NewCoinDeskAPI() throws Exception{
         //呼叫 coindesk 的 API，並進行資料轉換，組成新 API
-        //http://localhost:8081/coindesk/NewCoinDeskAPI?api_url=https://api.coindesk.com/v1/bpi/currentprice.json
+        //http://localhost:8081/coindesk/NewCoinDeskAPI
 
-        NewCoinDesk newCoinDesk = coindeskService.transCoindesk(api_url);
+        NewCoinDesk newCoinDesk = coindeskService.transCoindesk();
 
         return ResponseEntity.status(HttpStatus.OK).body(newCoinDesk);
     }
 
     @Transactional
     @PostMapping("/coin")
+    @ApiOperation("新增幣別")
     public ResponseEntity<?> insert(@RequestBody DbCoinDesk dbCoinDesk) throws Exception {
         //insert
         //http://localhost:8081/coindesk/coin
@@ -56,9 +63,10 @@ public class CoinDeskController {
 
     @Transactional
     @PutMapping("/coin/{dbCoinDeskId}")
+    @ApiOperation("修改幣別")
     public ResponseEntity<?> update(@PathVariable Integer dbCoinDeskId, @RequestBody DbCoinDesk dbCoinDesk) throws Exception {
         //update
-        //http://localhost:8081/coindesk/coin/6
+        //http://localhost:8081/coindesk/coin/5
         //{"code":"NTD","symbol":"&#165;","rate":"29,449.8807","description":"新台幣","rate_float":29449.8807}
 
         boolean status = coindeskService.update(dbCoinDesk,dbCoinDeskId);
@@ -72,9 +80,10 @@ public class CoinDeskController {
 
     @Transactional
     @DeleteMapping ("/coin/{dbCoinDeskId}")
+    @ApiOperation("刪除幣別")
     public ResponseEntity<?> delete(@PathVariable Integer dbCoinDeskId) throws Exception {
         //delete
-        //http://localhost:8081/coindesk/coin/6
+        //http://localhost:8081/coindesk/coin/5
 
         boolean status = coindeskService.delete(dbCoinDeskId);
         if(status){
@@ -86,6 +95,7 @@ public class CoinDeskController {
     }
 
     @GetMapping  ("/coin/{dbCoinDeskId}")
+    @ApiOperation("取得幣別")
     public ResponseEntity<?> get(@PathVariable Integer dbCoinDeskId) throws Exception {
         //get
         //http://localhost:8081/coindesk/coin/1

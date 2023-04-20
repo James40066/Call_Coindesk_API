@@ -22,7 +22,7 @@ class CoinDeskControllerTest {
     @Test
     void coinDeskAPI() throws Exception {
         RequestBuilder requestBuilder = MockMvcRequestBuilders
-                .get("/coindesk/CoinDeskAPI?api_url=https://api.coindesk.com/v1/bpi/currentprice.json");
+                .get("/coindesk/CoinDeskAPI");
 
         mockMvc.perform(requestBuilder)
                 .andDo(MockMvcResultHandlers.print())
@@ -34,7 +34,7 @@ class CoinDeskControllerTest {
     @Test
     void newCoinDeskAPI() throws Exception {
         RequestBuilder requestBuilder = MockMvcRequestBuilders
-                .get("/coindesk/NewCoinDeskAPI?api_url=https://api.coindesk.com/v1/bpi/currentprice.json");
+                .get("/coindesk/NewCoinDeskAPI");
 
         mockMvc.perform(requestBuilder)
                 .andDo(MockMvcResultHandlers.print())
@@ -74,7 +74,7 @@ class CoinDeskControllerTest {
     @Test
     void delete() throws Exception{
         RequestBuilder requestBuilder = MockMvcRequestBuilders
-                .delete("/coindesk/coin/{dbCoinDeskId}",6);
+                .delete("/coindesk/coin/{dbCoinDeskId}",5);
 
         mockMvc.perform(requestBuilder)
                 .andDo(MockMvcResultHandlers.print())

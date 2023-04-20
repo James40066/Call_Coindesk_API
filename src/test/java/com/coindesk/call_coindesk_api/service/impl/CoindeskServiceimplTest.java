@@ -21,11 +21,9 @@ public class CoindeskServiceimplTest {
     @Autowired
     CoindeskService coindeskService;
 
-    private final String url = "https://api.coindesk.com/v1/bpi/currentprice.json";
-
     @Test
     void callApi() throws Exception {
-        JSONObject jsob = new JSONObject(coindeskService.callApi(url));
+        JSONObject jsob = new JSONObject(coindeskService.callApi());
 
         assertNotNull(jsob);
         assertEquals("Bitcoin",jsob.getString("chartName"));
@@ -33,7 +31,7 @@ public class CoindeskServiceimplTest {
 
     @Test
     void getCoindesk() throws Exception {
-        CoinDesk coinDesk = coindeskService.getCoindesk(url);
+        CoinDesk coinDesk = coindeskService.getCoindesk();
 
         assertNotNull(coinDesk);
         assertEquals("Bitcoin",coinDesk.getChartName());
@@ -41,7 +39,7 @@ public class CoindeskServiceimplTest {
 
     @Test
     void transCoindesk() throws Exception {
-        NewCoinDesk newCoinDesk = coindeskService.transCoindesk(url);
+        NewCoinDesk newCoinDesk = coindeskService.transCoindesk();
         List<Coin> coin = newCoinDesk.getCoins();
 
         assertNotNull(newCoinDesk);

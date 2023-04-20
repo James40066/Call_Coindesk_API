@@ -1,6 +1,7 @@
 package com.coindesk.call_coindesk_api.bean;
 
-import jakarta.persistence.*;
+import javax.persistence.*;
+
 @Entity
 @Table(name = "coin")
 public class DbCoinDesk {

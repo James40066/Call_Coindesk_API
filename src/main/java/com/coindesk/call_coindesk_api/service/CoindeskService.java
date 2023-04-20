@@ -11,13 +11,13 @@ import java.util.Date;
 
 public interface CoindeskService {
     //取得JSON
-    String callApi(String url) throws Exception;
+    String callApi() throws Exception;
 
     //呼叫Coindesk_API
-    CoinDesk getCoindesk(String url) throws Exception;
+    CoinDesk getCoindesk() throws Exception;
 
     //呼叫Coindesk資料轉換_API
-    NewCoinDesk transCoindesk(String url) throws Exception;
+    NewCoinDesk transCoindesk() throws Exception;
 
     //取得目前時間
     String getNow() throws Exception;
